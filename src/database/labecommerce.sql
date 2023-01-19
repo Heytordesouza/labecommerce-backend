@@ -92,4 +92,37 @@ WHERE price >= 100 AND price <=120
 ORDER BY price ASC;
 
 
+-- Exercicios SQL I
 
+CREATE TABLE purchases (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    total_price REAL NOT NULL,
+    paid INTEGER NOT NULL,
+    delivered_at TEXT NULL,
+    buyed_id TEXT NOT NULL,
+    FOREIGN KEY (buyed_id) REFERENCES users(id)
+);
+
+INSERT INTO purchases (id, total_price, paid, delivered_at, buyed_id)
+VALUES 
+('01', '500', '0', NULL, '02'),
+('02', '900', '1', NULL, '01'),
+('03', '800', '1', NULL, '02'),
+('04', '200', '0', NULL, '01');
+
+UPDATE purchases
+SET delivered_at = '18/01/2019'
+WHERE id = '02';
+
+UPDATE purchases
+SET delivered_at = '18/01/2019'
+WHERE id = '03';
+
+
+SELECT * FROM purchases;
+
+DROP TABLE purchases;
+
+SELECT * FROM purchases
+INNER JOIN users
+ON purchases.buyed_id = users.id;
