@@ -108,7 +108,7 @@ VALUES
 ('01', '500', '0', NULL, '02'),
 ('02', '900', '1', NULL, '01'),
 ('03', '800', '1', NULL, '02'),
-('04', '200', '0', NULL, '01');
+('04', '1000', '0', NULL, '01');
 
 UPDATE purchases
 SET delivered_at = '18/01/2019'
@@ -126,3 +126,111 @@ DROP TABLE purchases;
 SELECT * FROM purchases
 INNER JOIN users
 ON purchases.buyed_id = users.id;
+
+
+
+
+-- Exercicios SQL 2
+
+CREATE TABLE purchases_products (
+    purchase_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL
+);
+
+INSERT INTO purchases_products (purchase_id, product_id, quantity)
+VALUES 
+('03', '04', 8),
+('04', '03', 10),
+('01', '1000', 1);
+
+
+SELECT * FROM purchases_products
+INNER JOIN purchases
+ON purchases_products.purchase_id = purchases.id;
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+CREATE TABLE users (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
+);
+
+INSERT INTO users (id,email,password)
+VALUES ('01','janaina@email.com','calor123'),
+('02','tuninho@email.com','frio123'),
+('03','chegadebananinha@email.com','chegadepokemons'),
+('04','flamengo@email.com','palmeirasnãotemmundial');
+
+----------------------------
+
+CREATE TABLE products (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    price REAL NOT NULL,
+    category TEXT NOT NULL
+);
+
+INSERT INTO products (id,name,price,category)
+VALUES ('01','Blusa',30,'Moda'),
+('02','Relógio',120,'Acessórios'),
+('03','Boné',20,'Acessórios'),
+('04','Tênis',100,'Calçados'),
+('05','Monitor',1000,'Eletroeletrônico');
+
+---------------------------
+
+CREATE TABLE purchases (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    total_price REAL NOT NULL,
+    paid INTEGER NOT NULL,
+    delivered_at TEXT NULL,
+    buyed_id TEXT NOT NULL,
+    FOREIGN KEY (buyed_id) REFERENCES users(id)
+);
+
+INSERT INTO purchases (id, total_price, paid, delivered_at, buyed_id)
+VALUES 
+('01', '500', '0', NULL, '02'),
+('02', '900', '1', NULL, '01'),
+('03', '800', '1', NULL, '02'),
+('04', '1000', '0', NULL, '01');
+
+----------------------------------------
+
+CREATE TABLE purchases_products (
+    purchase_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (purchase_id) REFERENCES purchases(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+INSERT INTO purchases_products (purchase_id, product_id, quantity)
+VALUES 
+('03', '04', 8),
+('04', '03', 10),
+('01', '1000', 1);
+
+SELECT * FROM purchases_products
+INNER JOIN purchases
+ON purchases_products.purchase_id = purchases.id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
