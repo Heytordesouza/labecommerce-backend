@@ -219,6 +219,10 @@ SELECT * FROM purchases_products
 INNER JOIN purchases
 ON purchases_products.purchase_id = purchases.id;
 
+-----------------------------------------------------------------------------------
+
+
+
 
 
 
