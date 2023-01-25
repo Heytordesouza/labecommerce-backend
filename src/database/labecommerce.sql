@@ -121,7 +121,7 @@
 
 -- SELECT * FROM purchases;
 
-DROP TABLE purchases_products;
+DROP TABLE purchases;
 
 -- SELECT * FROM purchases
 -- INNER JOIN users
@@ -190,7 +190,7 @@ CREATE TABLE purchases (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     total_price REAL NOT NULL,
     paid INTEGER NOT NULL,
-    delivered_at TEXT DEFAULT (DATETIME()) NOT NULL,
+    createdAt TEXT DEFAULT (DATETIME()) NOT NULL,
     buyed_id TEXT NOT NULL,
     FOREIGN KEY (buyed_id) REFERENCES users(id)
 );
@@ -198,9 +198,9 @@ CREATE TABLE purchases (
 INSERT INTO purchases (id, total_price, paid, buyed_id)
 VALUES 
 ('01', '500', '0', '02'),
-('02', '900', '1', '01'),
-('03', '800', '1', '02'),
-('04', '1000', '0', '01');
+('02', '900', '1', '03'),
+('03', '800', '1', '2023'),
+('04', '1000', '0', '04');
 
 ----------------------------------------
 
@@ -216,7 +216,7 @@ INSERT INTO purchases_products (purchase_id, product_id, quantity)
 VALUES 
 ('03', '04', 8),
 ('04', '03', 10),
-('01', '1000', 1);
+('01', '05', 1);
 
 SELECT * FROM purchases_products
 INNER JOIN purchases
@@ -224,7 +224,9 @@ ON purchases_products.purchase_id = purchases.id;
 
 -----------------------------------------------------------------------------------
 
-
+SELECT * FROM purchases
+INNER JOIN users
+ON purchases.buyed_id = users.id;
 
 
 

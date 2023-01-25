@@ -23,7 +23,9 @@ app.get('/ping', (req: Request, res: Response) => {
 //Get All Users
 app.get('/users', async (req: Request, res: Response) => {
     try{
-      const result = await db.raw(`SELECT * FROM users`)
+    //   const result = await db.raw(`SELECT * FROM users`)
+
+      const result = await db("users")
 
       res.status(200).send(result)
 
@@ -51,10 +53,12 @@ app.get("/products/search", async (req: Request, res: Response) => {
 
         const name = req.query.name
 
-        const [result] = await db.raw (`
-        SELECT * FROM products
-        WHERE name LIKE "%${name}%";
-        `)
+        // const [result] = await db.raw (`
+        // SELECT * FROM products
+        // WHERE name LIKE "%${name}%";
+        // `)
+
+        const [result] = await db("products").where("name", "LIKE", `%${name}%`);
 
         if (name.length < 1) {
             res.status(400)
@@ -84,7 +88,9 @@ app.get("/products/search", async (req: Request, res: Response) => {
 //Get All Products
 app.get('/products', async(req: Request, res: Response) => {
     try {
-     const result = await db.raw(`SELECT * FROM products`)
+    //  const result = await db.raw(`SELECT * FROM products`)
+
+      const result = await db("products")
 
       res.status(200).send(result)
 
@@ -173,14 +179,16 @@ app.post('/users', async(req: Request, res: Response) => {
             throw new Error ("Digite uma senha com pelo menos 4 caracteres")
         }
 
-    await db.raw(`
-        INSERT INTO users(id, name, email, password)
-        VALUES("${id}", "${name}", "${email}", "${password}")
-    `)
+    // await db.raw(`
+    //     INSERT INTO users(id, name, email, password)
+    //     VALUES("${id}", "${name}", "${email}", "${password}")
+    // `)
+
+    await db("users").insert({id, name, email, password})
     
         // users.push(newUser)
 
-    res.status(201).send("Cadastro registrado com sucesso")
+    res.status(201).send("Usuário registrado com sucesso")
 
     } catch (error:any) {
         console.log(error)
@@ -248,10 +256,12 @@ app.post('/products', async (req: Request, res: Response) => {
             }})
         }
 
-    await db.raw(`
-    INSERT INTO products(id, name, price, description, image_url)
-    VALUES("${id}", "${name}", "${price}", "${description}", "${image_url}")
-    `)
+    // await db.raw(`
+    // INSERT INTO products(id, name, price, description, image_url)
+    // VALUES("${id}", "${name}", "${price}", "${description}", "${image_url}")
+    // `)
+
+    await db("products").insert({id, name, price, description, image_url})
 
     // products.push(newProduct)
 
@@ -277,7 +287,7 @@ app.post('/products', async (req: Request, res: Response) => {
 app.post('/purchases', async (req: Request, res: Response) => {
 
     try {
-        const {id, total_price, paid, delivered_at, buyed_id} = req.body 
+        const {id, total_price, paid, buyed_id} = req.body 
 
         if(typeof id !== "string"){
             res.status(400)
@@ -309,7 +319,6 @@ app.post('/purchases', async (req: Request, res: Response) => {
             id, 
             total_price, 
             paid, 
-            delivered_at, 
             buyed_id
         }
 
@@ -346,10 +355,12 @@ app.post('/purchases', async (req: Request, res: Response) => {
         //     }})
         // }
 
-        await db.raw(`
-        INSERT INTO purchases (id, total_price, paid, buyed_id)
-        VALUES("${id}", "${total_price}", "${paid}", "${buyed_id}")
-        `)
+        // await db.raw(`
+        // INSERT INTO purchases (id, total_price, paid, buyed_id)
+        // VALUES("${id}", "${total_price}", "${paid}", "${buyed_id}")
+        // `)
+
+        await db("purchases").insert({id, total_price, paid, buyed_id})
 
         // purchases.push(newPurchases)
 
@@ -374,7 +385,8 @@ app.post('/purchases', async (req: Request, res: Response) => {
 //Get All Purchases "Somente verificar"
 app.get('/purchases', async (req: Request, res: Response) => {
     try {
-        const result = await db.raw(`SELECT * FROM purchases`)
+        const result = await db("purchases")
+
         res.status(200).send(result)
 
     } catch (error) {
@@ -392,6 +404,71 @@ app.get('/purchases', async (req: Request, res: Response) => {
     }
 })
 
+
+//Get Purchase by id
+
+app.get('/purchases/:id', async (req: Request, res: Response) => {
+    try {
+        const idToPurchase = req.params.id
+
+        if(!idToPurchase){
+            res.status(400)
+            throw new Error("É necessário informar um id")
+        }
+
+        const [purchase] = await db("purchases").where({id: idToPurchase})
+
+        if(!purchase){
+            res.status(404)
+            throw new Error("'id' não encontrada")
+        } 
+        // SELECT * FROM purchases
+        // INNER JOIN users
+        // ON purchases.buyed_id = users.id;
+        if(purchase){
+
+            const cart = await db ("purchases")
+            .select("purchases.id AS purchaseID", 
+            "purchases.total_price",
+            "purchases.paid AS isPaid",
+            "purchases.createdAt",
+            "purchases.buyed_id",
+            "users.name", 
+            "users.email")
+            .innerJoin("users","purchases.buyed_id","=","users.id")
+            .where({purchaseID: idToPurchase})
+
+            const purchasesProducts = await db("purchases_products")
+            .select("purchases_products.product_id AS purchases_productsId",
+            "products.name",
+            "products.price",
+            "products.description",
+            "products.image_url",
+            "purchases_products.quantity")
+            .innerJoin("products","products.id","=","purchases_productsId")
+            .where({purchases_productsId: idToPurchase})
+
+            const result = {...cart, productsList:purchasesProducts}
+            res.status(200).send(result)
+        }
+
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+
+})
+
+
 /////////////////////////////////////////
 
 
@@ -401,10 +478,12 @@ app.get("/products/:id", async (req: Request, res: Response) => {
     try {
         const id = req.params.id
 
-        const [result] = await db.raw (`
-        SELECT * FROM products
-        WHERE id = "${id}";
-        `)
+        // const [result] = await db.raw (`
+        // SELECT * FROM products
+        // WHERE id = "${id}";
+        // `)
+
+        const [result] = await db("products").where({id: id})
 
         if(typeof id !== "string"){
             res.status(400)
@@ -444,10 +523,12 @@ app.get("/users/:id/purchases", async (req: Request, res: Response) => {
 
         try {
             const id = req.params.id
-            const [result] = await db.raw (`
-            SELECT * FROM purchases
-            WHERE id = "${id}";
-            `)
+            // const [result] = await db.raw (`
+            // SELECT * FROM purchases
+            // WHERE id = "${id}";
+            // `)
+
+            const [result] = await db("purchases").where({id: id})
     
             if(typeof id !== "string"){
                 res.status(400)
