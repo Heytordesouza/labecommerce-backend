@@ -1,52 +1,54 @@
 import { TUser } from "./types";
 import { TProduct } from "./types";
 import { TPurchase } from "./types";
-import { Descriptions } from "./types";
+// import { Descriptions } from "./types";
 
-export const users: TUser[] = [
-    { id:  "1981",
-      name: "Flamengo",
-      email: "ammal@gmail.com",
-      password: "flamengo123"
-    },
-    { id:  "2019",
-      name: "Gabigol",
-      email: "flamengo@gmail.com",
-      password: "flamengo12345"
-    }
-]
+export const users: TUser[] = []
 
-export const products: TProduct[] = [
-    { id:  "01",
-      name: "Blusa Flamengo 2023",
-      price: 350,
-      description: Descriptions.CLOTHES_AND_SHOES,
-      image_url: "https:..."
-    },
-    { id:  "02",
-      name: "Pulseira Flamengo Branco",
-      price: 30,
-      description: Descriptions.ACCESSORIES,
-      image_url: "https:..."
-    },
-]
+export const products: TProduct[] = []
 
-export const purchases: TPurchase[] = [
-  {
-    id: "01",
-    total_price: 100,
-    paid: 1,
-    delivered_at: "null",
-    buyed_id: "01"
-  },
-  {
-    id: "02",
-    total_price: 150,
-    paid: 0,
-    delivered_at: "null",
-    buyed_id: "02"
-  }
-]
+export const purchases: TPurchase[] = []
+
+// export const users: TUser[] = [
+//     { id:  "1981",
+//       name: "Flamengo",
+//       email: "ammal@gmail.com",
+//       password: "flamengo123"
+//     },
+//     { id:  "2019",
+//       name: "Gabigol",
+//       email: "flamengo@gmail.com",
+//       password: "flamengo12345"
+//     }
+// ]
+
+// export const products: TProduct[] = [
+//     { id:  "01",
+//       name: "Blusa Flamengo 2023",
+//       price: 350,
+//       description: Descriptions.CLOTHES_AND_SHOES,
+//       image_url: "https:..."
+//     },
+//     { id:  "02",
+//       name: "Pulseira Flamengo Branco",
+//       price: 30,
+//       description: Descriptions.ACCESSORIES,
+//       image_url: "https:..."
+//     },
+// ]
+
+// export const purchases: TPurchase[] = [
+//   {
+//     id: "01",
+//     total_price: 100,
+//     buyer: "01"
+//   },
+//   {
+//     id: "02",
+//     total_price: 150,
+//     buyer: "02"
+//   }
+// ]
 
 // // export const purchases: TPurchase[] = [
 // //     { userId:  "1981",
